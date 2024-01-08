@@ -1,0 +1,70 @@
+Creating an AI application that combines face detection and recognition involves utilizing pre-trained models for detection and recognition tasks.
+Here's a Python code framework that integrates OpenCV for face detection using Haar cascades and the face_recognition library for face recognition using pre-trained models:
+
+Ensure you have the required libraries installed:
+
+
+pip install opencv-python
+pip install numpy
+pip install face_recognition
+
+
+Here's a basic structure for face detection and recognition in images:
+
+python-
+import cv2
+import face_recognition
+
+# Load pre-trained face detection model (Haar cascades)
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+# Load an image
+image = cv2.imread('path_to_image.jpg')
+
+# Convert image to RGB (required by face_recognition library)
+rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+# Detect faces using Haar cascades
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+faces = face_cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5)
+
+# Loop through detected faces
+for (x, y, w, h) in faces:
+    # Extract face region from the image
+    face_image = image[y:y+h, x:x+w]
+    
+    # Convert face image to RGB for face recognition
+    rgb_face_image = cv2.cvtColor(face_image, cv2.COLOR_BGR2RGB)
+    
+    # Use face_recognition library for face recognition
+    # Encode face images to get face encodings
+    known_face_encodings = face_recognition.face_encodings(rgb_face_image)
+
+    # Load known faces and their encodings (replace with your known face encodings)
+    known_face_names = ["Person 1", "Person 2"]  # Add names corresponding to known face encodings
+
+    # Compare the detected face encodings with known face encodings
+    for face_encoding in known_face_encodings:
+        # Compare face encodings to check for matches
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+        
+        # Find the index of matched face encoding
+        if True in matches:
+            matched_index = matches.index(True)
+            matched_name = known_face_names[matched_index]
+            print(f"Detected face matched with: {matched_name}")
+    
+    # Draw rectangle around detected face
+    cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
+# Display the result
+cv2.imshow('Detected Faces', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+This code integrates OpenCV for face detection using Haar cascades and the face_recognition library for face recognition. Replace `'path_to_image.jpg'` with the path to your image. 
+The code detects faces using Haar cascades, extracts face regions, converts them to RGB for recognition, and compares detected faces with known face encodings to perform recognition.
+
+To perform face recognition in videos, you'd iterate through video frames similarly and apply the same process for face detection and recognition in each frame. 
+Remember, the quality of recognition depends on the quality of known face encodings and the similarity threshold set for matching faces.
